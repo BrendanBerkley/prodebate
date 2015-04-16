@@ -18,11 +18,18 @@ from taggit.managers import TaggableManager
 class Point(models.Model):
     thesis = models.CharField(max_length=255)
     thesis_elaborated = models.TextField(blank=True)
+    citation = models.TextField(blank=True)
     # category = models.ForeignKey(Category)
     tags = TaggableManager(blank=True)
 
     def __unicode__(self):
         return self.thesis
+
+class SupportingPoint(Point):
+    point_supports = models.ForeignKey(Point, related_name='points_this_supports')
+
+class CounterPoint(Point):
+    point_counters = models.ForeignKey(Point, related_name='points_this_counters')
 
 class Prompt(models.Model):
     prompt = models.CharField(max_length=255)

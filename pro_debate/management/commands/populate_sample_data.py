@@ -16,7 +16,10 @@ class Command(BaseCommand):
         aa.save()
 
         Point.objects.bulk_create([
-            Point(thesis="Life begins at conception."),
+            Point(
+                thesis="Life begins at conception.",
+                thesis_elaborated="'Conception' is defined as the moment " + \
+                "when a sperm and an egg fuse to become a zygote."),
             Point(thesis="Life begins at implantation."),
             Point(thesis="Life begins when the fetus can feel pain."),
             Point(thesis="Life begins when the fetus can retain memories."),
