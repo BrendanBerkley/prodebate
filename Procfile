@@ -1,0 +1,1 @@
+web: gunicorn prodebate.wsgi --log-file -
