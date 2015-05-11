@@ -13,58 +13,35 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Point',
+            name='Elaboration',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('thesis', models.CharField(max_length=255)),
-                ('thesis_elaborated', models.TextField(blank=True)),
-                ('citation', models.TextField(blank=True)),
+                ('tree_relation', models.CharField(max_length=1, choices=[(b'G', b'General'), (b'S', b'Supporting Point'), (b'C', b'Counterpoint')])),
+                ('elaboration', models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Prompt',
+            name='Manifestation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('prompt', models.CharField(max_length=255)),
+                ('url', models.URLField(max_length=400)),
+                ('title', models.CharField(max_length=255)),
+                ('notes', models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
-            name='CounterPoint',
+            name='Position',
             fields=[
-                ('point_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='pro_debate.Point')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('position_statement', models.CharField(max_length=255)),
+                ('elaboration', models.ForeignKey(blank=True, to='pro_debate.Elaboration', null=True)),
+                ('manifestation', models.ForeignKey(blank=True, to='pro_debate.Manifestation', null=True)),
+                ('tags', taggit.managers.TaggableManager(to='taggit.Tag', through='taggit.TaggedItem', blank=True, help_text='A comma-separated list of tags.', verbose_name='Tags')),
             ],
-            bases=('pro_debate.point',),
-        ),
-        migrations.CreateModel(
-            name='SupportingPoint',
-            fields=[
-                ('point_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='pro_debate.Point')),
-            ],
-            bases=('pro_debate.point',),
         ),
         migrations.AddField(
-            model_name='prompt',
-            name='points',
-            field=models.ManyToManyField(to='pro_debate.Point', blank=True),
-        ),
-        migrations.AddField(
-            model_name='prompt',
-            name='tags',
-            field=taggit.managers.TaggableManager(to='taggit.Tag', through='taggit.TaggedItem', blank=True, help_text='A comma-separated list of tags.', verbose_name='Tags'),
-        ),
-        migrations.AddField(
-            model_name='point',
-            name='tags',
-            field=taggit.managers.TaggableManager(to='taggit.Tag', through='taggit.TaggedItem', blank=True, help_text='A comma-separated list of tags.', verbose_name='Tags'),
-        ),
-        migrations.AddField(
-            model_name='supportingpoint',
-            name='point_supports',
-            field=models.ForeignKey(related_name='points_this_supports', to='pro_debate.Point'),
-        ),
-        migrations.AddField(
-            model_name='counterpoint',
-            name='point_counters',
-            field=models.ForeignKey(related_name='points_this_counters', to='pro_debate.Point'),
+            model_name='elaboration',
+            name='related_to',
+            field=models.ForeignKey(related_name='position_tree_relation', blank=True, to='pro_debate.Position', null=True),
         ),
     ]

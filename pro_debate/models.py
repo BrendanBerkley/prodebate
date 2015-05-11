@@ -2,40 +2,42 @@ from django.db import models
 
 from taggit.managers import TaggableManager
 
-# class Category(models.Model):
-#     MEGA_CATEGORIES = (
-#         ('P', 'Politics'),
-#         ('S', 'Sports'),
-#         ('R', 'Religion'),
-#         ('M', 'Movies'),
-#     )
-#     name = models.CharField(max_length=255)
-#     mega_category = models.CharField(max_length=1, choices=MEGA_CATEGORIES)
 
-#     def __unicode__(self):
-#         return self.name
-
-class Point(models.Model):
-    thesis = models.CharField(max_length=255)
-    thesis_elaborated = models.TextField(blank=True)
-    citation = models.TextField(blank=True)
-    # category = models.ForeignKey(Category)
+class Position(models.Model):
+    position_statement = models.CharField(max_length=255)
+    elaboration = models.ForeignKey('Elaboration', blank=True, null=True)
+    manifestation = models.ForeignKey('Manifestation', blank=True, null=True)
     tags = TaggableManager(blank=True)
 
     def __unicode__(self):
-        return self.thesis
+        return self.position_statement
 
-class SupportingPoint(Point):
-    point_supports = models.ForeignKey(Point, related_name='points_this_supports')
+class Elaboration(models.Model):
+    TREE_RELATION_CHOICES = (
+        ('G', 'General'),
+        ('S', 'Supporting Point'),
+        ('C', 'Counterpoint'),
+    )
 
-class CounterPoint(Point):
-    point_counters = models.ForeignKey(Point, related_name='points_this_counters')
-
-class Prompt(models.Model):
-    prompt = models.CharField(max_length=255)
-    points = models.ManyToManyField(Point, blank=True)
-    # category = models.ForeignKey(Category)
-    tags = TaggableManager(blank=True)
+    tree_relation = models.CharField(
+        max_length=1, 
+        choices=TREE_RELATION_CHOICES
+    )
+    related_to = models.ForeignKey(
+        'Position', 
+        blank=True, 
+        null=True,
+        related_name='position_tree_relation'
+    )
+    elaboration = models.TextField(blank=True)
 
     def __unicode__(self):
-        return self.prompt
+        return str(self.id)
+
+class Manifestation(models.Model):
+    url = models.URLField(max_length=400)
+    title = models.CharField(max_length=255)
+    notes = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.title

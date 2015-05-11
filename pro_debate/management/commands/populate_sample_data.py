@@ -24,7 +24,6 @@ class Command(BaseCommand):
             Point(thesis="Life begins when the fetus can feel pain."),
             Point(thesis="Life begins when the fetus can retain memories."),
             Point(thesis="Life begins at birth."),
-            Point(thesis="Life begins at conception."),
             Point(thesis="Life begins at 40."),
         ])
 
