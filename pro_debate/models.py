@@ -5,8 +5,6 @@ from taggit.managers import TaggableManager
 
 class Position(models.Model):
     position_statement = models.CharField(max_length=255)
-    # parent_positions = models.ManyToManyField('Position', blank=True,)
-    # manifestation = models.ForeignKey('Manifestation', blank=True, null=True)
     tags = TaggableManager(blank=True)
 
     def __unicode__(self):
@@ -38,11 +36,13 @@ class Elaboration(models.Model):
     elaboration = models.TextField(blank=True)
 
     def __unicode__(self):
-        return self.elaborates.position_statement
+        return self.elaborates.position_statement + " (" + \
+            self.tree_relation + ")"
 
 class Manifestation(models.Model):
     url = models.URLField(max_length=400)
     title = models.CharField(max_length=255)
+    manifests = models.ForeignKey('Position')
     notes = models.TextField(blank=True)
 
     def __unicode__(self):
