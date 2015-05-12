@@ -34,14 +34,17 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('position_statement', models.CharField(max_length=255)),
-                ('elaboration', models.ForeignKey(blank=True, to='pro_debate.Elaboration', null=True)),
-                ('manifestation', models.ForeignKey(blank=True, to='pro_debate.Manifestation', null=True)),
                 ('tags', taggit.managers.TaggableManager(to='taggit.Tag', through='taggit.TaggedItem', blank=True, help_text='A comma-separated list of tags.', verbose_name='Tags')),
             ],
         ),
         migrations.AddField(
             model_name='elaboration',
-            name='related_to',
-            field=models.ForeignKey(related_name='position_tree_relation', blank=True, to='pro_debate.Position', null=True),
+            name='child_of',
+            field=models.ForeignKey(related_name='child_of_position', blank=True, to='pro_debate.Position', null=True),
+        ),
+        migrations.AddField(
+            model_name='elaboration',
+            name='elaborates',
+            field=models.ForeignKey(related_name='elaboration_of_position', blank=True, to='pro_debate.Position', null=True),
         ),
     ]

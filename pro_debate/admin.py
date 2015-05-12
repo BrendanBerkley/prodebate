@@ -11,10 +11,16 @@ admin.site.register(Manifestation)
 class ElaborationInline(admin.TabularInline):
     model = Elaboration
     extra = 1
+    fk_name = 'elaborates'
 
 
-class ManifestationInline(admin.TabularInline):
-    model = Manifestation
+# class PositionInline(admin.TabularInline):
+#     model = Position.child_positions.position_children
+#     inlines = [ElaborationInline]
+#     extra = 1
+
+# class ManifestationInline(admin.TabularInline):
+#     model = Manifestation
 
 
 class PositionAdmin(admin.ModelAdmin):
@@ -22,5 +28,6 @@ class PositionAdmin(admin.ModelAdmin):
         (None, {'fields': ['position_statement', 'tags']}),
     ]
     inlines = [ElaborationInline]
+    # inlines = [PositionInline]
 
 admin.site.register(Position, PositionAdmin)
