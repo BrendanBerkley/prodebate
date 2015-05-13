@@ -1,9 +1,9 @@
 {% if positions %}
-    <ul>
+    <div>
     {% for position in positions %}
-        <li><a href="/positions/{{ position.id }}/">{{ position.position_statement}}</a></li>
+        <h2><a href="{% url 'detail' position.id 0 %}">{{ position.position_statement}}</a></h2>
     {% endfor %}
-    </ul>
+    </div>
 {% else %}
     <p>No positions here.</p>
 {% endif %}

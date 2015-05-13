@@ -1,26 +1,52 @@
+{% if parent %}
+	<h3>Parent: {{ parent }}</h3>
+{% endif %}
+
 <h2>{{ position.position_statement }}</h2>
 
 
-<h3>Children</h3>
-{% for child in children %}
-{{child}}
-{% endfor %}
-
-<h3>Elaborations</h3>
 {% for elaboration in position.elaboration_of_position.all %}
-    <li>{{ elaboration.get_tree_relation_display }}</li>
-    <li>{{ elaboration.elaborates }}</li>
-    <li>{{ elaboration.child_of }}</li>
-    <li>{{ elaboration.elaboration }}</li>
+	<p>
+		{% if elaboration.child_of %}
+			{{ elaboration.get_tree_relation_display }} for 
+			<a href="{% url 'detail' elaboration.child_of.id 0 %}">{{ elaboration.child_of }}</a><br />
+		{% endif  %}
+		{{ elaboration.elaboration }}
+	</p>
 {% endfor %}
 
+{% if support_points %}
+	<h3>Support points</h3>
+	{% for child in support_points %}
+		<div>
+			<h4><a href="{% url 'detail' child.elaborates.id child.child_of.id %}">{{ child.elaborates }}</a></h4>
+			<p><em>
+			{{ child.elaboration }}
+			</em></p>
+		</div>
+	{% endfor %}
+{% endif %}
 
-<h3>Manifestations</h3>
-{% for manifestation in position.manifestation_set.all %}
-    <li>
-    	<a href="{{ manifestation.url }}">{{ manifestation.title }}</a>
-    	<div><em>
-    		{{ manifestation.notes }}
-    	</em></div>
-	</li>
-{% endfor %}
+{% if counter_points %}
+	<h3>Counterpoints</h3>
+	{% for child in counter_points %}
+		<div>
+			<h4><a href="{% url 'detail' child.elaborates.id child.child_of.id %}">{{ child.elaborates }}</a></h4>
+			<p><em>
+			{{ child.elaboration }}
+			</em></p>
+		</div>
+	{% endfor %}
+{% endif %}
+
+{% if position.manifestation_set.all %}
+	<h3>Manifestations</h3>
+	{% for manifestation in position.manifestation_set.all %}
+		<li>
+			<a href="{{ manifestation.url }}">{{ manifestation.title }}</a>
+			<div><em>
+				{{ manifestation.notes }}
+			</em></div>
+		</li>
+	{% endfor %}
+{% endif %}
