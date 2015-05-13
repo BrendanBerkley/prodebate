@@ -1,0 +1,9 @@
+{% if positions %}
+    <ul>
+    {% for position in positions %}
+        <li><a href="/positions/{{ position.id }}/">{{ position.position_statement}}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No positions here.</p>
+{% endif %}

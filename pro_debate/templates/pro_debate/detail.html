@@ -1,0 +1,26 @@
+<h2>{{ position.position_statement }}</h2>
+
+
+<h3>Children</h3>
+{% for child in children %}
+{{child}}
+{% endfor %}
+
+<h3>Elaborations</h3>
+{% for elaboration in position.elaboration_of_position.all %}
+    <li>{{ elaboration.get_tree_relation_display }}</li>
+    <li>{{ elaboration.elaborates }}</li>
+    <li>{{ elaboration.child_of }}</li>
+    <li>{{ elaboration.elaboration }}</li>
+{% endfor %}
+
+
+<h3>Manifestations</h3>
+{% for manifestation in position.manifestation_set.all %}
+    <li>
+    	<a href="{{ manifestation.url }}">{{ manifestation.title }}</a>
+    	<div><em>
+    		{{ manifestation.notes }}
+    	</em></div>
+	</li>
+{% endfor %}
