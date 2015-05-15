@@ -65,43 +65,41 @@
 		{% endif %}
 
 		</div>
-		<br /><br />
-		<div class="row">
-			<div class="col-sm-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Supporting points</h3>
-					</div>
-					<div class="list-group">
-					{% for child in support_points %}
-						<a class="list-group-item" href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
-							<h4>{{ child.elaborates }}</h4>
-						</a>
-					{% endfor %}
-						<a class="list-group-item" href="javascript:alert('No can do yet!');">
-							<i class="fa fa-plus"></i> Add a Supporting point
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Counterpoints</h3>
-					</div>
-					<div class="list-group">
-					{% for child in counter_points %}
-						<a class="list-group-item" href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
-							<h4>{{ child.elaborates }}</h4>
-						</a>
-					{% endfor %}
-						<a class="list-group-item" href="javascript:alert('No can do yet!');">
-							<i class="fa fa-plus"></i> Add a Counterpoint
-						</a>
-					</div>
-				</div>
-			</div>
+		<br />
+
+		<h3>Supporting points</h3>
+		<ul>
+		{% for child in support_points %}
+			<li>
+				<a href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
+					<h4>{{ child.elaborates }}</h4>
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+		<div>
+			<a href="javascript:alert('No can do yet!');">
+				<i class="fa fa-plus"></i> Add a Supporting point
+			</a>
 		</div>
+
+		<h3>Counterpoints</h3>
+		<ul>
+		{% for child in counter_points %}
+			<li>
+				<a href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
+					<h4>{{ child.elaborates }}</h4>
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+		<div>
+			<a href="javascript:alert('No can do yet!');">
+				<i class="fa fa-plus"></i> Add a Counterpoint
+			</a>
+		</div>
+					
+
 		<br /><br />
 
 		<div class="panel panel-default">
