@@ -1,9 +1,15 @@
-{% if positions %}
-    <div>
-    {% for position in positions %}
-        <h2><a href="{% url 'detail' position.id 0 %}">{{ position.position_statement}}</a></h2>
-    {% endfor %}
-    </div>
-{% else %}
-    <p>No positions here.</p>
-{% endif %}
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="col-xs-12">
+		{% if positions %}
+			<div>
+			{% for position in positions %}
+				<h2><a href="{% url 'detail' position.id %}">{{ position.position_statement}}</a></h2>
+			{% endfor %}
+			</div>
+		{% else %}
+			<p>No positions here.</p>
+		{% endif %}
+	</div>
+{% endblock %}

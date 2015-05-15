@@ -1,52 +1,127 @@
-{% if parent %}
-	<h3>Parent: {{ parent }}</h3>
-{% endif %}
+{% extends 'base.html' %}
 
-<h2>{{ position.position_statement }}</h2>
+{% block content %}
+	<div class="col-xs-12">
+		<h3>
+			<a href="{% url 'index' %}"><i class="fa fa-home"></i></a>
+		</h3>
+		{% if parent %}
+			<h3>
+				<a href="{% url 'detail' parent.id %}{% if grandparent %}?parent={{ grandparent }}{% endif %}">
+					<i class="fa fa-angle-up"></i> {{ parent }}
+				</a>
+			</h3>
+		{% endif %}
 
+		<h2>
+			{% if parent %}
+				<small style="display: inline-block; padding-bottom: 7px;">{{ elaboration_in_tree.get_tree_relation_display }}</small><br />
+			{% endif %}
+			{{ position.position_statement }}
+		</h2>
 
-{% for elaboration in position.elaboration_of_position.all %}
-	<p>
-		{% if elaboration.child_of %}
-			{{ elaboration.get_tree_relation_display }} for 
-			<a href="{% url 'detail' elaboration.child_of.id 0 %}">{{ elaboration.child_of }}</a><br />
-		{% endif  %}
-		{{ elaboration.elaboration }}
-	</p>
-{% endfor %}
+		<div class="row">
+		{% if parent %}
+			<div class="{% if elaborations_in_other_trees %}col-sm-8{% else %}col-xs-12{% endif %}">
+				<p class="lead">
+					{{ elaboration_in_tree.elaboration }}
+				</p>
+			</div>
+			{% if elaborations_in_other_trees %}
+			<div class="col-sm-4">
+				<div class="well">
+					<h4>In other trees</h4>
+					<ul>
+					{% for elaboration in elaborations_in_other_trees %}
+						<li>
+							<em>{{ elaboration.get_tree_relation_display }}</em> for
+							<a href="{% url 'detail' elaboration.elaborates.id %}?parent={{ elaboration.child_of.id }}">{{ elaboration.child_of }}</a>
+						</li>
+					{% endfor %}
+					</ul>
+				</div>
+			</div>
+			{% endif %}
+		{% else %}
+			<div class="col-xs-12">
+			{% if elaboration_in_tree %}
+				<p class="lead">{{ elaboration_in_tree.elaboration }}</p>
+			{% endif %}
 
-{% if support_points %}
-	<h3>Support points</h3>
-	{% for child in support_points %}
-		<div>
-			<h4><a href="{% url 'detail' child.elaborates.id child.child_of.id %}">{{ child.elaborates }}</a></h4>
-			<p><em>
-			{{ child.elaboration }}
-			</em></p>
+			{% if elaborations_in_other_trees %}
+				<div class="well">
+					<h4>This argument can be found in the following trees:</h4>
+					<ul>
+					{% for elaboration in elaborations_in_other_trees %}
+						<li>
+							<em>{{ elaboration.get_tree_relation_display }}</em> for
+							<a href="{% url 'detail' elaboration.elaborates.id %}?parent={{ elaboration.child_of.id }}">{{ elaboration.child_of }}</a>
+						</li>
+					{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+			</div>
+		{% endif %}
+
 		</div>
-	{% endfor %}
-{% endif %}
 
-{% if counter_points %}
-	<h3>Counterpoints</h3>
-	{% for child in counter_points %}
-		<div>
-			<h4><a href="{% url 'detail' child.elaborates.id child.child_of.id %}">{{ child.elaborates }}</a></h4>
-			<p><em>
-			{{ child.elaboration }}
-			</em></p>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Supporting points</h3>
+					</div>
+					<div class="list-group">
+					{% for child in support_points %}
+						<a class="list-group-item" href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
+							<h4>{{ child.elaborates }}</h4>
+						</a>
+					{% endfor %}
+						<a class="list-group-item" href="javascript:alert('No can do yet!');">
+							<i class="fa fa-plus"></i> Add a Supporting point
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Counterpoints</h3>
+					</div>
+					<div class="list-group">
+					{% for child in counter_points %}
+						<a class="list-group-item" href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
+							<h4>{{ child.elaborates }}</h4>
+						</a>
+					{% endfor %}
+						<a class="list-group-item" href="javascript:alert('No can do yet!');">
+							<i class="fa fa-plus"></i> Add a Counterpoint
+						</a>
+					</div>
+				</div>
+			</div>
 		</div>
-	{% endfor %}
-{% endif %}
 
-{% if position.manifestation_set.all %}
-	<h3>Manifestations</h3>
-	{% for manifestation in position.manifestation_set.all %}
-		<li>
-			<a href="{{ manifestation.url }}">{{ manifestation.title }}</a>
-			<div><em>
-				{{ manifestation.notes }}
-			</em></div>
-		</li>
-	{% endfor %}
-{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Manifestations</h3>
+			</div>
+			<ul class="list-group">
+			{% for manifestation in position.manifestation_set.all %}
+				<li class="list-group-item">
+					<h4><a href="{{ manifestation.url }}">{{ manifestation.title }}</a></h4>
+					<blockquote>
+						{{ manifestation.notes }}
+					</blockquote>
+				</li>
+			{% endfor %}
+				<li class="list-group-item">
+					<a href="javascript:alert('No can do yet!');">
+						<i class="fa fa-plus"></i> Add a Manifestation
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+{% endblock %}

@@ -11,21 +11,42 @@ def index(request):
     return render(request, 'pro_debate/index.html', context)
 
 
-def detail(request, position_id, parent_id):
+def detail(request, position_id):
     position = get_object_or_404(Position, pk=position_id)
+
     support_points = Elaboration.objects.filter(child_of=position_id, tree_relation='S')
     counter_points = Elaboration.objects.filter(child_of=position_id, tree_relation='C')
 
-    parent = None
+    get_parent = request.GET.get('parent')
+    get_grandparent = request.GET.get('grandparent')
 
-    if Position.objects.filter(pk=parent_id).first():
-    	# Need a check to make sure the parent is indeed a parent
-    	parent = Position.objects.get(pk=parent_id)
+    parent = None
+    elaboration_in_tree = None
+    elaborations_in_other_trees = None
+
+    if Position.objects.filter(pk=get_parent).first():
+        # Could use a check to make sure the parent is indeed a parent
+        parent = Position.objects.get(pk=get_parent)
+        # Don't think I'm enforcing this at the DB level yet, but each
+        # support/counter point gets one elaboration. So there should only
+        # ever be one of these objects returned:
+        elaboration_in_tree = Elaboration.objects.get(elaborates=position_id, child_of=get_parent)
+        elaborations_in_other_trees = Elaboration.objects.filter(elaborates=position_id).exclude(child_of=get_parent)
+    else:
+        # If we're not in a tree, we can try getting the 'general' argument.
+        # That term/pattern might not continue to exist as is.
+        if Elaboration.objects.filter(elaborates=position_id, tree_relation='G').first():
+            elaboration_in_tree = Elaboration.objects.get(elaborates=position_id, tree_relation='G')
+        elaborations_in_other_trees = Elaboration.objects.filter(elaborates=position_id).exclude(tree_relation='G')
+
 
     context = {
-    	'position': position, 
-    	'support_points': support_points,
-    	'counter_points': counter_points,
-    	'parent': parent
-	}
+        'position': position, 
+        'support_points': support_points,
+        'counter_points': counter_points,
+        'parent': parent,
+        'grandparent': get_grandparent,
+        'elaboration_in_tree': elaboration_in_tree,
+        'elaborations_in_other_trees': elaborations_in_other_trees
+    }
     return render(request, 'pro_debate/detail.html', context)
