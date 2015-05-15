@@ -4,10 +4,13 @@ from .models import Position, Elaboration
 
 
 def index(request):
+    positions = Position.objects.filter().order_by('id')
     # positions = Position.objects.filter().order_by('id')[:50]
-    positions = Position.objects.exclude(elaboration_of_position__tree_relation='S').exclude(elaboration_of_position__tree_relation='C').order_by('id')[:50]
+    # positions = Position.objects.exclude(elaboration_of_position__tree_relation='S').exclude(elaboration_of_position__tree_relation='C').order_by('id')[:50]
 
-    context = {'positions': positions}
+    context = {
+        'positions': positions
+    }
     return render(request, 'pro_debate/index.html', context)
 
 
