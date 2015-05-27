@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
-from .models import Position, Elaboration
+from .models import Position, Elaboration, Manifestation
 
 
 def index(request):
@@ -81,6 +81,28 @@ def submit(request, position_id):
     parent_param = '?parent=%s' % child_of
     grandparent_param = '&grandparent=%s' % grandchild_of if grandchild_of else ''
     return HttpResponseRedirect(reverse('detail', args=(new_position.id,)) + parent_param + grandparent_param)
+    # return render(request, 'pro_debate/detail.html', context) 
+
+
+def submit_manifestation(request, position_id):
+    url = request.POST['url'];
+    title = request.POST['title'];
+    notes = request.POST['notes'];
+    parent = request.POST['parent'];
+    grandparent = request.POST['grandparent'];
+
+    current_position = Position.objects.get(pk=position_id);
+    new_manifestation = Manifestation.objects.create(
+        url=url,
+        title=title,
+        manifests=current_position,
+        notes=notes
+    )
+    current_position.manifestation_set.add(new_manifestation)
+
+    parent_param = '?parent=%s' % parent if parent else ''
+    grandparent_param = '&grandparent=%s' % grandparent if grandparent else ''
+    return HttpResponseRedirect(reverse('detail', args=(position_id,)) + parent_param + grandparent_param)
     # return render(request, 'pro_debate/detail.html', context) 
 
 
