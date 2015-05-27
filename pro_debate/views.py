@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.core.urlresolvers import reverse
 
 from .models import Position, Elaboration
 
@@ -53,3 +55,45 @@ def detail(request, position_id):
         'elaborations_in_other_trees': elaborations_in_other_trees
     }
     return render(request, 'pro_debate/detail.html', context)
+
+
+def submit(request, position_id):
+    position = request.POST['position'];
+    elaboration = request.POST['elaboration'];
+    tree_relation = request.POST['tree_relation'];
+    child_of = request.POST['child_of'];
+    grandchild_of = request.POST['grandchild_of'];
+
+    new_position = Position.objects.create(position_statement=position)
+    new_elaboration = Elaboration.objects.create(
+        elaboration=elaboration,
+        tree_relation=tree_relation,
+        child_of=Position.objects.get(pk=child_of),
+        elaborates=Position.objects.get(pk=position_id)
+    )
+    new_position.elaboration_of_position.add(new_elaboration)
+
+    context = {
+        'position_id': position_id,
+        'error_message': "You didn't select a choice.",
+    }
+
+    parent_param = '?parent=%s' % child_of
+    grandparent_param = '&grandparent=%s' % grandchild_of if grandchild_of else ''
+    return HttpResponseRedirect(reverse('detail', args=(new_position.id,)) + parent_param + grandparent_param)
+    # return render(request, 'pro_debate/detail.html', context) 
+
+
+def add(request):
+    position = request.POST['position'];
+    elaboration = request.POST['elaboration'];
+
+    new_position = Position.objects.create(position_statement=position)
+    new_elaboration = Elaboration.objects.create(
+        elaboration=elaboration,
+        tree_relation='G',
+        elaborates=Position.objects.get(pk=new_position.id)
+    )
+    new_position.elaboration_of_position.add(new_elaboration)
+
+    return HttpResponseRedirect(reverse('detail', args=(new_position.id,)))

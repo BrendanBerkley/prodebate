@@ -5,14 +5,40 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 </head>
 <body>
 <div class="container">
 	<div class="row">
-	{% block content %}
-	{% endblock %}
+		<div class="col-xs-12">
+			<h3>
+				<a href="{% url 'index' %}"><i class="fa fa-home"></i></a>
+				{% if user.is_authenticated %}
+				<a data-toggle="collapse" href="#general-collapse"><i class="fa fa-plus"></i></a>
+				{% endif %}
+			</h3>
+
+			{% if user.is_authenticated %}
+			<div class="collapse" id="general-collapse">
+				<form action="{% url 'add' %}" method="post">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="position">Make your point. This is the top (root?) of a new tree.</label> 
+						<input class="form-control" type="text" name="position" />
+					</div>
+					<div class="form-group">
+						<label for="elaboration">Elaborate a bit if you'd like.</label> 
+						<textarea class="form-control" name="elaboration"></textarea>
+					</div>
+					<input class="btn btn-primary" type="submit" value="Submit" />
+				</form>
+			</div>
+			{% endif %}
+		</div>
+		{% block content %}
+		{% endblock %}
 	</div>
 </div>
 </body>
