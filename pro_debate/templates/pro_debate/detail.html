@@ -150,9 +150,11 @@
 			{% for manifestation in position.manifestation_set.all %}
 				<li class="list-group-item">
 					<h4><a href="{{ manifestation.url }}">{{ manifestation.title }}</a></h4>
+					{% if manifestation.notes %}
 					<blockquote>
 						{{ manifestation.notes }}
 					</blockquote>
+					{% endif %}
 				</li>
 			{% endfor %}
 				<li class="list-group-item">
