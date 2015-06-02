@@ -35,9 +35,11 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'taggit',
+    'django_comments',
     'pro_debate',
 )
 
@@ -71,6 +73,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'prodebate.wsgi.application'
+
+# Added this because django-contrib-comments told me to.
+SITE_ID = 1
 
 
 # Database

@@ -16,6 +16,23 @@ def index(request):
     return render(request, 'pro_debate/index.html', context)
 
 
+def manifestation_index(request):
+    manifestations = Manifestation.objects.filter().order_by('id')
+
+    context = {
+        'manifestations': manifestations
+    }
+    return render(request, 'pro_debate/manifestation_index.html', context)
+
+
+def manifestation(request, manifestation_id):
+    manifestation = get_object_or_404(Manifestation, pk=manifestation_id)
+
+    context = {
+        'manifestation': manifestation
+    }
+    return render(request, 'pro_debate/manifestation.html', context)
+
 def detail(request, position_id):
     position = get_object_or_404(Position, pk=position_id)
 

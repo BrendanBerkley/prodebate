@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="col-xs-12">
+		{% if manifestations %}
+			<div>
+			{% for manifestation in manifestations %}
+				<h2><a href="{% url 'manifestation' manifestation.id %}">{{ manifestation }}</a></h2>
+			{% endfor %}
+			</div>
+		{% else %}
+			<p>No manifestations here.</p>
+		{% endif %}
+	</div>
+{% endblock %}

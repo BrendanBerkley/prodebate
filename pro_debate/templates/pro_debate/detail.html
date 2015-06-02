@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load comments %}
+
 {% block content %}
 	<div class="col-xs-12">
 		{% if parent %}
@@ -187,11 +189,30 @@
 				</li>
 			</ul>
 		</div>
+
+		<h4>Comments</h4>
+		{% render_comment_list for position %}
+
+		<h4>Discuss this position</h4>
+
+		{% if user.is_authenticated %}
+			{% get_comment_form for position as form %}
+			<form action="{% comment_form_target %}" method="POST">
+			{% csrf_token %}
+			<textarea class="form-control" id="{{ form.comment.id_for_label }}" maxlength="{{ form.comment.field.max_length }}" name="{{ form.comment.name }}"></textarea>
+			{{ form.honeypot }}
+			{{ form.content_type }}
+			{{ form.object_pk }}
+			{{ form.timestamp }}
+			{{ form.security_hash }}
+			<input type="hidden" name="next" value="{% url 'detail' position.id %}" />
+			<br />
+			<input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" />
+			</form>
+		{% else %}
+			<p>Please <a href="/admin">log in</a> to leave a comment.</p>
+		{% endif %}
+	
 	</div>
-
-
-
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
 
 {% endblock %}
