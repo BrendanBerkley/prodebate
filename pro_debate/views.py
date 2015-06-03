@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
 from .models import Position, Elaboration, Manifestation
+from .forms import SupportCounterPointForm
 
 
 def index(request):
@@ -61,6 +62,21 @@ def detail(request, position_id):
             elaboration_in_tree = Elaboration.objects.get(elaborates=position_id, tree_relation='G')
         elaborations_in_other_trees = Elaboration.objects.filter(elaborates=position_id).exclude(tree_relation='G')
 
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = SupportCounterPointForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/thanks/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = SupportCounterPointForm()
+
 
     context = {
         'position': position, 
@@ -69,7 +85,8 @@ def detail(request, position_id):
         'parent': parent,
         'grandparent': get_grandparent,
         'elaboration_in_tree': elaboration_in_tree,
-        'elaborations_in_other_trees': elaborations_in_other_trees
+        'elaborations_in_other_trees': elaborations_in_other_trees,
+        'form': form
     }
     return render(request, 'pro_debate/detail.html', context)
 

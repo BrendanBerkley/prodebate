@@ -1,0 +1,16 @@
+<br />
+<form action="{% url 'submit' position.id %}" method="post">
+	{% csrf_token %}
+	<div class="form-group">
+		<label for="position">What's your point?</label> 
+		<input class="form-control" type="text" name="position" />
+	</div>
+	<div class="form-group">
+		<label for="elaboration">Tell me more.</label> 
+		<textarea class="form-control" name="elaboration"></textarea>
+	</div>
+	<input type="hidden" name="tree_relation" value="{{ tree_relation }}" />
+	<input type="hidden" name="child_of" value="{{ position.id }}" />
+	<input type="hidden" name="grandchild_of" value="{{ parent.id }}" />
+	<input class="btn btn-primary" type="submit" value="Submit" />
+</form>
