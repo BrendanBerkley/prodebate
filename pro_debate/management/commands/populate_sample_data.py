@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from pro_debate.models import *
 from django.contrib.auth.models import *
+from pro_debate.sample_data import SampleData
 
 class Command(BaseCommand):
     help = 'Give some basic data to work with'
@@ -15,18 +16,8 @@ class Command(BaseCommand):
         aa.set_password('aa')
         aa.save()
 
-        Point.objects.bulk_create([
-            Point(
-                thesis="Life begins at conception.",
-                thesis_elaborated="'Conception' is defined as the moment " + \
-                "when a sperm and an egg fuse to become a zygote."),
-            Point(thesis="Life begins at implantation."),
-            Point(thesis="Life begins when the fetus can feel pain."),
-            Point(thesis="Life begins when the fetus can retain memories."),
-            Point(thesis="Life begins at birth."),
-            Point(thesis="Life begins at 40."),
-        ])
+        sample_data = SampleData()
+        sample_data.create_basics()
 
-        self.prompt1 = Prompt.objects.create(prompt="When does life begin?")
-
+        
         print "You are the moon master!"
