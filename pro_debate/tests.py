@@ -7,6 +7,10 @@ from .sample_data import SampleData
 # Thanks, http://toastdriven.com/blog/2011/apr/10/guide-to-testing-in-django/
 class PollsViewsTestCase(TestCase):
 
+    """
+    Tests to see if /positions/ returns a 200, if it returns a list of
+    positions, and if that list of positions matches a queryset in length
+    """
     def test_index(self):
         sample_data = SampleData()
         sample_data.create_basics()
