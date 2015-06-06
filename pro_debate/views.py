@@ -62,20 +62,53 @@ def detail(request, position_id):
             elaboration_in_tree = Elaboration.objects.get(elaborates=position_id, tree_relation='G')
         elaborations_in_other_trees = Elaboration.objects.filter(elaborates=position_id).exclude(tree_relation='G')
 
+
+    invalid_submit = None
+
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = SupportCounterPointForm(request.POST)
+        print form.errors
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            # ...
+            point = form.cleaned_data
+            print point
+            new_position = Position.objects.create(position_statement=point['position'])
+            new_elaboration = Elaboration.objects.create(
+                elaboration=point['elaboration'],
+                tree_relation=point['tree_relation'],
+                child_of=Position.objects.get(pk=point['child_of']),
+                elaborates=Position.objects.get(pk=position_id)
+            )
+            new_position.elaboration_of_position.add(new_elaboration)
+
+            context = {
+                'position_id': position_id,
+            }
+
+            parent_param = '?parent=%s' % point['child_of']
+            grandparent_param = '&grandparent=%s' % point['grandchild_of'] if point['grandchild_of'] else ''
             # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
+            return HttpResponseRedirect(reverse('detail', args=(new_position.id,)) + parent_param + grandparent_param)
+        else:
+            invalid_submit = form.cleaned_data['tree_relation']
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = SupportCounterPointForm()
+        grandparent_id = ""
+        if parent:
+            grandparent_id = parent.id
+
+        form = SupportCounterPointForm(
+            initial={
+                'child_of': position.id,
+                'grandchild_of': grandparent_id
+            }
+        )
+
+
 
 
     context = {
@@ -86,7 +119,8 @@ def detail(request, position_id):
         'grandparent': get_grandparent,
         'elaboration_in_tree': elaboration_in_tree,
         'elaborations_in_other_trees': elaborations_in_other_trees,
-        'form': form
+        'form': form,
+        'invalid_submit': invalid_submit
     }
     return render(request, 'pro_debate/detail.html', context)
 

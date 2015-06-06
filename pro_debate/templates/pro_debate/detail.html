@@ -3,15 +3,8 @@
 {% load comments %}
 
 {% block content %}
+	
 	<div class="col-xs-12">
-	<form action="{% url 'detail' position.id %}" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="hidden" name="tree_relation" value="S" />
-    <input type="hidden" name="child_of" value="{{ position.id }}" />
-    <input type="hidden" name="grandchild_of" value="{{ parent.id }}" />
-    <input type="submit" value="Submit" />
-</form>
 		{% if parent %}
 			<h3>
 				<a href="{% url 'detail' parent.id %}{% if grandparent %}?parent={{ grandparent }}{% endif %}">
@@ -78,13 +71,14 @@
 		<ul>
 		{% for child in support_points %}
 			<li>
-				<a href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
-					<h4>{{ child.elaborates }}</h4>
-				</a>
+				<h4>
+					<a href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
+						{{ child.elaborates }}
+					</a>
+				</h4>
 			</li>
 		{% endfor %}
 		</ul>
-
 
 		{% if user.is_authenticated %}
 		<div>
@@ -93,7 +87,7 @@
 			</a>
 		</div>
 
-		<div class="collapse" id="support-collapse">
+		<div class="{% if not invalid_submit == 'S' %}collapse{% endif %}" id="support-collapse">
 			{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="S" %}
 		</div>
 		{% endif %}
@@ -102,9 +96,11 @@
 		<ul>
 		{% for child in counter_points %}
 			<li>
-				<a href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
-					<h4>{{ child.elaborates }}</h4>
-				</a>
+				<h4>
+					<a href="{% url 'detail' child.elaborates.id %}?parent={{ child.child_of.id }}{% if parent %}&amp;grandparent={{ parent.id }}{% endif %}">
+						{{ child.elaborates }}
+					</a>
+				</h4>
 			</li>
 		{% endfor %}
 		</ul>
@@ -116,7 +112,7 @@
 			</a>
 		</div>
 
-		<div class="collapse" id="counter-collapse">
+		<div class="{% if not invalid_submit == 'C' %}collapse{% endif %}" id="counter-collapse">
 			{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="C" %}
 		</div>
 		{% endif %}

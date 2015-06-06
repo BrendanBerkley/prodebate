@@ -1,4 +1,5 @@
 <br />
+{% comment %}
 <form action="{% url 'submit' position.id %}" method="post">
 	{% csrf_token %}
 	<div class="form-group">
@@ -12,5 +13,34 @@
 	<input type="hidden" name="tree_relation" value="{{ tree_relation }}" />
 	<input type="hidden" name="child_of" value="{{ position.id }}" />
 	<input type="hidden" name="grandchild_of" value="{{ parent.id }}" />
+	<input class="btn btn-primary" type="submit" value="Submit" />
+</form>
+{% endcomment %}
+
+<form action="{% url 'detail' position.id %}" method="post">
+	{{ form.non_field_errors }}
+	{% csrf_token %}
+	{% for field in form.visible_fields %}
+		<div class="form-group {% if field.errors %} has-error{% endif %}">
+			<label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
+
+			{{ field }}
+
+			{% if field.errors %}
+				<p class="help-block">
+				{% for error in field.errors %}
+					{{ error|escape }} 
+				{% endfor %}
+			    </p>
+			{% endif %}
+		</div>
+	{% endfor %}
+	{% for field in form.hidden_fields %}
+		{% if field.name == "tree_relation" %}
+		<input id="{{ field.id_for_label }}" maxlength="{{ field.field.max_length }}" name="{{ field.name }}" type="hidden" value="{{ tree_relation }}" />
+		{% else %}
+		{{ field }}
+		{% endif %}
+	{% endfor %}
 	<input class="btn btn-primary" type="submit" value="Submit" />
 </form>
