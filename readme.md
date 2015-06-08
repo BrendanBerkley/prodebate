@@ -1,16 +1,16 @@
 # Prodebate
 
 ## Setup
-- Install Docker and docker-compose.
+- Install Docker and docker-compose
 - `git clone`
 - `docker-compose up`
-
 
 ## To Do
 
 ### Smaller stuff
 
 - General elaboration to real django form
+- All point/elaboration forms should probably have the same view logic
 - grandparent into elaboration model (and into links)?
 - when form errors, return with correct URL params
 
@@ -23,7 +23,7 @@
 - Edit things
 - Error handling
 - Get tags working
-- Sample data
+- Make sure it's easy to spin up a new instance and populate sample data
 - Private/draft points?
 
 ### Bigger stuff, later
