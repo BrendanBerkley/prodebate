@@ -17,7 +17,6 @@
 </form>
 {% endcomment %}
 
-<form action="{% url 'detail' position.id %}" method="post">
 	{{ form.non_field_errors }}
 	{% csrf_token %}
 	{% for field in form.visible_fields %}
@@ -43,4 +42,3 @@
 		{% endif %}
 	{% endfor %}
 	<input class="btn btn-primary" type="submit" value="Submit" />
-</form>

@@ -8,11 +8,9 @@
 ## To Do
 
 ### Smaller stuff
-
-- General elaboration to real django form
-- All point/elaboration forms should probably have the same view logic
 - grandparent into elaboration model (and into links)?
 - when form errors, return with correct URL params
+- when form errors, only show error on one form instead of all three
 
 ### Bigger stuff, sooner
 - Manifestation models.

@@ -11,8 +11,24 @@ def index(request):
     # positions = Position.objects.filter().order_by('id')[:50]
     # positions = Position.objects.exclude(elaboration_of_position__tree_relation='S').exclude(elaboration_of_position__tree_relation='C').order_by('id')[:50]
 
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = SupportCounterPointForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            redirect_info = process_form(form)
+            return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
+        else:
+            invalid_submit = form.cleaned_data['tree_relation']
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = SupportCounterPointForm()
+
     context = {
-        'positions': positions
+        'positions': positions,
+        'form': form
     }
     return render(request, 'pro_debate/index.html', context)
 
@@ -69,32 +85,12 @@ def detail(request, position_id):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = SupportCounterPointForm(request.POST)
-        print form.errors
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            point = form.cleaned_data
-            print point
-            new_position = Position.objects.create(position_statement=point['position'])
-            new_elaboration = Elaboration.objects.create(
-                elaboration=point['elaboration'],
-                tree_relation=point['tree_relation'],
-                child_of=Position.objects.get(pk=point['child_of']),
-                elaborates=Position.objects.get(pk=position_id)
-            )
-            new_position.elaboration_of_position.add(new_elaboration)
-
-            context = {
-                'position_id': position_id,
-            }
-
-            parent_param = '?parent=%s' % point['child_of']
-            grandparent_param = '&grandparent=%s' % point['grandchild_of'] if point['grandchild_of'] else ''
-            # redirect to a new URL:
-            return HttpResponseRedirect(reverse('detail', args=(new_position.id,)) + parent_param + grandparent_param)
+            redirect_info = process_form(form)
+            return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
         else:
             invalid_submit = form.cleaned_data['tree_relation']
-
     # if a GET (or any other method) we'll create a blank form
     else:
         grandparent_id = ""
@@ -107,8 +103,6 @@ def detail(request, position_id):
                 'grandchild_of': grandparent_id
             }
         )
-
-
 
 
     context = {
@@ -125,31 +119,35 @@ def detail(request, position_id):
     return render(request, 'pro_debate/detail.html', context)
 
 
-def submit(request, position_id):
-    position = request.POST['position'];
-    elaboration = request.POST['elaboration'];
-    tree_relation = request.POST['tree_relation'];
-    child_of = request.POST['child_of'];
-    grandchild_of = request.POST['grandchild_of'];
+def process_form(form):
+    # process the data in form.cleaned_data as required
+    point = form.cleaned_data
+    print point
+    child_of_position = Position.objects.get(pk=point['child_of']) if point['child_of'] else None
 
-    new_position = Position.objects.create(position_statement=position)
+    new_position = Position.objects.create(position_statement=point['position'])
     new_elaboration = Elaboration.objects.create(
-        elaboration=elaboration,
-        tree_relation=tree_relation,
-        child_of=Position.objects.get(pk=child_of),
-        elaborates=Position.objects.get(pk=position_id)
+        elaboration=point['elaboration'],
+        tree_relation=point['tree_relation'],
+        child_of=child_of_position,
+        elaborates=Position.objects.get(pk=new_position.id)
     )
     new_position.elaboration_of_position.add(new_elaboration)
 
-    context = {
-        'position_id': position_id,
-        'error_message': "You didn't select a choice.",
+    if point['tree_relation'] != 'G':
+        parent_param = '?parent=%s' % point['child_of'] if point['child_of'] else ''
+        grandparent_param = '&grandparent=%s' % point['grandchild_of'] if point['grandchild_of'] else ''
+    else:
+        parent_param = ''
+        grandparent_param = ''
+    
+    return_info = {
+        'new_position': new_position.id,
+        'parent_param': parent_param,
+        'grandparent_param': grandparent_param
     }
 
-    parent_param = '?parent=%s' % child_of
-    grandparent_param = '&grandparent=%s' % grandchild_of if grandchild_of else ''
-    return HttpResponseRedirect(reverse('detail', args=(new_position.id,)) + parent_param + grandparent_param)
-    # return render(request, 'pro_debate/detail.html', context) 
+    return return_info
 
 
 def submit_manifestation(request, position_id):
@@ -171,19 +169,5 @@ def submit_manifestation(request, position_id):
     parent_param = '?parent=%s' % parent if parent else ''
     grandparent_param = '&grandparent=%s' % grandparent if grandparent else ''
     return HttpResponseRedirect(reverse('detail', args=(position_id,)) + parent_param + grandparent_param)
-    # return render(request, 'pro_debate/detail.html', context) 
 
 
-def add(request):
-    position = request.POST['position'];
-    elaboration = request.POST['elaboration'];
-
-    new_position = Position.objects.create(position_statement=position)
-    new_elaboration = Elaboration.objects.create(
-        elaboration=elaboration,
-        tree_relation='G',
-        elaborates=Position.objects.get(pk=new_position.id)
-    )
-    new_position.elaboration_of_position.add(new_elaboration)
-
-    return HttpResponseRedirect(reverse('detail', args=(new_position.id,)))

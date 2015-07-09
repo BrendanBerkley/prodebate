@@ -28,17 +28,8 @@
 
 			{% if user.is_authenticated %}
 			<div class="collapse" id="general-collapse">
-				<form action="{% url 'add' %}" method="post">
-					{% csrf_token %}
-					<div class="form-group">
-						<label for="position">Make your point. This is the top (root?) of a new tree.</label> 
-						<input class="form-control" type="text" name="position" />
-					</div>
-					<div class="form-group">
-						<label for="elaboration">Elaborate a bit if you'd like.</label> 
-						<textarea class="form-control" name="elaboration"></textarea>
-					</div>
-					<input class="btn btn-primary" type="submit" value="Submit" />
+				<form action="{% url 'index' %}" method="post">
+					{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="G" %}
 				</form>
 			</div>
 			{% endif %}

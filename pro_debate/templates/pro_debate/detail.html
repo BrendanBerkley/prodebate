@@ -88,7 +88,9 @@
 		</div>
 
 		<div class="{% if not invalid_submit == 'S' %}collapse{% endif %}" id="support-collapse">
-			{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="S" %}
+			<form action="{% url 'detail' position.id %}" method="post">
+				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="S" %}
+			</form>
 		</div>
 		{% endif %}
 
@@ -113,7 +115,9 @@
 		</div>
 
 		<div class="{% if not invalid_submit == 'C' %}collapse{% endif %}" id="counter-collapse">
-			{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="C" %}
+			<form action="{% url 'detail' position.id %}" method="post">
+				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="C" %}
+			</form>
 		</div>
 		{% endif %}
 					

@@ -15,7 +15,10 @@ class SupportCounterPointForm(forms.Form):
         }),
         required=False
     )
-    tree_relation = forms.CharField(widget=forms.HiddenInput(), max_length=1)
+    tree_relation = forms.CharField(
+        widget=forms.HiddenInput(), 
+        max_length=1
+    )
     child_of = forms.CharField(
         widget=forms.HiddenInput(), 
         required=False
