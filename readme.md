@@ -10,7 +10,6 @@
 ### Smaller stuff
 - grandparent into elaboration model (and into links)?
 - when form errors, return with correct URL params
-- when form errors, only show error on one form instead of all three
 
 ### Bigger stuff, sooner
 - Manifestation models.

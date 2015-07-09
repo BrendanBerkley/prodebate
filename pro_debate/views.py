@@ -11,24 +11,30 @@ def index(request):
     # positions = Position.objects.filter().order_by('id')[:50]
     # positions = Position.objects.exclude(elaboration_of_position__tree_relation='S').exclude(elaboration_of_position__tree_relation='C').order_by('id')[:50]
 
+    invalid_submit = None
+
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = SupportCounterPointForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
+            # If valid, process the form. This is spun out into an object 
+            # because we use the same logic in the detail view.
             redirect_info = process_form(form)
+            # Redirect to the new position we created. I wanted to do this in
+            # the process_form object but it didn't seem to work
             return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
         else:
             invalid_submit = form.cleaned_data['tree_relation']
-
-    # if a GET (or any other method) we'll create a blank form
+    # if not POST, create a blank form
     else:
         form = SupportCounterPointForm()
 
     context = {
         'positions': positions,
-        'form': form
+        'form': form,
+        'invalid_submit': invalid_submit
     }
     return render(request, 'pro_debate/index.html', context)
 
@@ -49,6 +55,7 @@ def manifestation(request, manifestation_id):
         'manifestation': manifestation
     }
     return render(request, 'pro_debate/manifestation.html', context)
+
 
 def detail(request, position_id):
     position = get_object_or_404(Position, pk=position_id)
@@ -81,17 +88,14 @@ def detail(request, position_id):
 
     invalid_submit = None
 
-    # if this is a POST request we need to process the form data
+    # See notes in index view for commentary
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
         form = SupportCounterPointForm(request.POST)
-        # check whether it's valid:
         if form.is_valid():
             redirect_info = process_form(form)
             return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
         else:
             invalid_submit = form.cleaned_data['tree_relation']
-    # if a GET (or any other method) we'll create a blank form
     else:
         grandparent_id = ""
         if parent:
@@ -103,7 +107,6 @@ def detail(request, position_id):
                 'grandchild_of': grandparent_id
             }
         )
-
 
     context = {
         'position': position, 
@@ -122,7 +125,6 @@ def detail(request, position_id):
 def process_form(form):
     # process the data in form.cleaned_data as required
     point = form.cleaned_data
-    print point
     child_of_position = Position.objects.get(pk=point['child_of']) if point['child_of'] else None
 
     new_position = Position.objects.create(position_statement=point['position'])
