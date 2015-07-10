@@ -33,6 +33,12 @@ class Elaboration(models.Model):
         null=True,
         related_name='child_of_position',
     )
+    grandchild_of = models.ForeignKey(
+        'Position', 
+        blank=True, 
+        null=True,
+        related_name='grandchild_of_position',
+    )
     elaboration = models.TextField(blank=True)
 
     def __unicode__(self):
