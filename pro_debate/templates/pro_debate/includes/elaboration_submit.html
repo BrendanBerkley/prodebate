@@ -3,12 +3,12 @@
 {{ form.non_field_errors }}
 {% csrf_token %}
 {% for field in form.visible_fields %}
-	<div class="form-group {% if field.errors and invalid_submit == tree_relation %} has-error{% endif %}">
+	<div class="form-group {% if field.errors and which_form_is_invalid == tree_relation %} has-error{% endif %}">
 		<label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
 
 		{{ field }}
 
-		{% if field.errors and invalid_submit == tree_relation %}
+		{% if field.errors and which_form_is_invalid == tree_relation %}
 			<p class="help-block">
 			{% for error in field.errors %}
 				{{ error|escape }} 
@@ -24,4 +24,4 @@
 	{{ field }}
 	{% endif %}
 {% endfor %}
-<input class="btn btn-primary" type="submit" value="Submit" name="submit-elaboration" />
+<input class="btn btn-primary" type="submit" value="Submit" name="{{ submit }}" />

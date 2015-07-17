@@ -48,4 +48,12 @@ class SubmitManifestationForm(forms.Form):
         })
     )
     manifests = forms.CharField(widget=forms.HiddenInput())
+    position_parent = forms.CharField(
+        widget=forms.HiddenInput(), 
+        required=False
+    )
+    position_grandparent = forms.CharField(
+        widget=forms.HiddenInput(), 
+        required=False
+    )
 

@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
 from .models import Position, Elaboration, Manifestation
-from .forms import SupportCounterPointForm
+from .forms import SupportCounterPointForm, SubmitManifestationForm
 
 
 def index(request):
@@ -11,7 +11,7 @@ def index(request):
     # positions = Position.objects.filter().order_by('id')[:50]
     # positions = Position.objects.exclude(elaboration_of_position__tree_relation='S').exclude(elaboration_of_position__tree_relation='C').order_by('id')[:50]
 
-    invalid_submit = None
+    which_form_is_invalid = None
 
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -21,12 +21,12 @@ def index(request):
         if form.is_valid():
             # If valid, process the form. This is spun out into an object 
             # because we use the same logic in the detail view.
-            redirect_info = process_form(form)
+            redirect_info = process_point_form(form)
             # Redirect to the new position we created. I wanted to do this in
-            # the process_form object but it didn't seem to work
+            # the process_point_form object but it didn't seem to work
             return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
         else:
-            invalid_submit = form.cleaned_data['tree_relation']
+            which_form_is_invalid = form.cleaned_data['tree_relation']
     # if not POST, create a blank form
     else:
         form = SupportCounterPointForm()
@@ -34,7 +34,7 @@ def index(request):
     context = {
         'positions': positions,
         'form': form,
-        'invalid_submit': invalid_submit
+        'which_form_is_invalid': which_form_is_invalid
     }
     return render(request, 'pro_debate/index.html', context)
 
@@ -86,27 +86,42 @@ def detail(request, position_id):
         elaborations_in_other_trees = Elaboration.objects.filter(elaborates=position_id).exclude(tree_relation='G')
 
 
-    invalid_submit = None
+    which_form_is_invalid = None
 
+    grandparent_id = parent.id if parent else ""
+
+    point_form = SupportCounterPointForm(
+        initial={
+            'child_of': position.id,
+            'grandchild_of': grandparent_id
+        },
+    )
+    manifestation_form = SubmitManifestationForm(
+        initial={
+            'manifests': position.id,
+            'position_parent': get_parent,
+            'position_grandparent': get_grandparent
+        },
+    )
     # See notes in index view for commentary
     if request.method == 'POST':
-        form = SupportCounterPointForm(request.POST)
-        if form.is_valid():
-            redirect_info = process_form(form)
-            return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
-        else:
-            invalid_submit = form.cleaned_data['tree_relation']
-    else:
-        grandparent_id = ""
-        if parent:
-            grandparent_id = parent.id
+        # Named the submit buttons to check which form submitted. I don't know
+        # if this is the best way to handle different forms in the same view.
+        if 'submit-elaboration' in request.POST:
+            point_form = SupportCounterPointForm(request.POST)
+            if point_form.is_valid():
+                redirect_info = process_point_form(point_form)
+                return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
+            else:
+                which_form_is_invalid = point_form.cleaned_data['tree_relation'] if 'tree_relation' in point_form.cleaned_data else ""
+        elif 'submit-manifestation' in request.POST:
+            manifestation_form = SubmitManifestationForm(request.POST)
+            if manifestation_form.is_valid():
+                redirect_info = process_manifestation(manifestation_form)
+                return HttpResponseRedirect(reverse('detail', args=(position_id,)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
+            else:
+                which_form_is_invalid = "manifestation"
 
-        form = SupportCounterPointForm(
-            initial={
-                'child_of': position.id,
-                'grandchild_of': grandparent_id
-            }
-        )
 
     context = {
         'position': position, 
@@ -116,13 +131,14 @@ def detail(request, position_id):
         'grandparent': get_grandparent,
         'elaboration_in_tree': elaboration_in_tree,
         'elaborations_in_other_trees': elaborations_in_other_trees,
-        'form': form,
-        'invalid_submit': invalid_submit
+        'point_form': point_form,
+        'manifestation_form': manifestation_form,
+        'which_form_is_invalid': which_form_is_invalid
     }
     return render(request, 'pro_debate/detail.html', context)
 
 
-def process_form(form):
+def process_point_form(form):
     # process the data in form.cleaned_data as required
     point = form.cleaned_data
     child_of_position = Position.objects.get(pk=point['child_of']) if point['child_of'] else None
@@ -152,24 +168,22 @@ def process_form(form):
     return return_info
 
 
-def submit_manifestation(request, position_id):
-    url = request.POST['url'];
-    title = request.POST['title'];
-    notes = request.POST['notes'];
-    parent = request.POST['parent'];
-    grandparent = request.POST['grandparent'];
+def process_manifestation(form):
+    manifestation = form.cleaned_data
 
-    current_position = Position.objects.get(pk=position_id);
     new_manifestation = Manifestation.objects.create(
-        url=url,
-        title=title,
-        manifests=current_position,
-        notes=notes
+        url=manifestation['url'],
+        title=manifestation['title'],
+        notes=manifestation['notes'],
+        manifests=Position.objects.get(pk=manifestation['manifests'])
     )
-    current_position.manifestation_set.add(new_manifestation)
 
-    parent_param = '?parent=%s' % parent if parent else ''
-    grandparent_param = '&grandparent=%s' % grandparent if grandparent else ''
-    return HttpResponseRedirect(reverse('detail', args=(position_id,)) + parent_param + grandparent_param)
+    parent_param = '?parent=%s' % manifestation['position_parent'] if manifestation['position_parent'] else ''
+    grandparent_param = '&grandparent=%s' % manifestation['position_grandparent'] if manifestation['position_grandparent'] else ''
+    
+    return_info = {
+        'parent_param': parent_param,
+        'grandparent_param': grandparent_param
+    }
 
-
+    return return_info

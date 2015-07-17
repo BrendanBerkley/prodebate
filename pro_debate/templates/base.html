@@ -27,9 +27,9 @@
 			</h3>
 
 			{% if user.is_authenticated %}
-			<div class="{% if not invalid_submit == 'G' %}collapse{% endif %}" id="general-collapse">
+			<div class="{% if not which_form_is_invalid == 'G' %}collapse{% endif %}" id="general-collapse">
 				<form action="{% url 'index' %}" method="post">
-					{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="G" %}
+					{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="G" form=point_form submit='elaboration-submit' %}
 				</form>
 			</div>
 			{% endif %}

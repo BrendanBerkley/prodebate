@@ -87,9 +87,9 @@
 			</a>
 		</div>
 
-		<div class="{% if not invalid_submit == 'S' %}collapse{% endif %}" id="support-collapse">
+		<div class="{% if not which_form_is_invalid == 'S' %}collapse{% endif %}" id="support-collapse">
 			<form action="{% url 'detail' position.id %}" method="post">
-				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="S" %}
+				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="S" form=point_form submit='submit-elaboration' %}
 			</form>
 		</div>
 		{% endif %}
@@ -114,9 +114,9 @@
 			</a>
 		</div>
 
-		<div class="{% if not invalid_submit == 'C' %}collapse{% endif %}" id="counter-collapse">
+		<div class="{% if not which_form_is_invalid == 'C' %}collapse{% endif %}" id="counter-collapse">
 			<form action="{% url 'detail' position.id %}" method="post">
-				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="C" %}
+				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="C" form=point_form submit='submit-elaboration' %}
 			</form>
 		</div>
 		{% endif %}
@@ -144,25 +144,9 @@
 					<a class="btn btn-default" data-toggle="collapse" href="#manifestation-collapse">
 						<i class="fa fa-plus"></i> Add a Manifestation
 					</a>
-					<br /><br />
-					<div class="collapse" id="manifestation-collapse">
-						<form action="{% url 'submit_manifestation' position.id %}" method="post">
-							{% csrf_token %}
-							<div class="form-group">
-								<label for="url">URL</label> 
-								<input class="form-control" type="text" id="url" name="url" />
-							</div>
-							<div class="form-group">
-								<label for="title">Title</label> 
-								<input class="form-control" type="text" id="title" name="title" />
-							</div>
-							<div class="form-group">
-								<label for="notes">Notes</label> 
-								<textarea class="form-control" id="notes" name="notes"></textarea>
-							</div>
-							<input type="hidden" name="parent" value="{{ parent.id }}" />
-							<input type="hidden" name="grandparent" value="{{ grandparent }}" />
-							<input class="btn btn-primary" type="submit" value="Submit" name="submit-manifestation" />
+					<div class="{% if not which_form_is_invalid == 'manifestation' %}collapse{% endif %}" id="manifestation-collapse">
+						<form action="{% url 'detail' position.id %}" method="post">
+							{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="manifestation" form=manifestation_form submit='submit-manifestation' %}
 						</form>
 					</div>
 					{% endif %}
