@@ -8,12 +8,13 @@
 ## To Do
 
 ### Sooner
+- Edit things
+- Link tags in detail view
 - Manifestation models.
 	- Spin out into into its own app?
 	- Refactor to allow the same URL to be applied to multiple notes
 	- Error handling / URL normalizing on submit
 	- External URL or Prodebate position
-- Edit things
 - Private/draft points?
 
 ### Later
