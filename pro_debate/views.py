@@ -24,7 +24,7 @@ def index(request):
             redirect_info = process_point_form(form)
             # Redirect to the new position we created. I wanted to do this in
             # the process_point_form object but it didn't seem to work
-            return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['parent_param'] + redirect_info['grandparent_param'])
+            return HttpResponseRedirect(reverse('detail', args=(redirect_info['new_position'],)) + redirect_info['get_params'])
         else:
             which_form_is_invalid = form.cleaned_data['tree_relation']
     # if not POST, create a blank form
@@ -33,7 +33,7 @@ def index(request):
 
     context = {
         'positions': positions,
-        'form': form,
+        'point_form': form,
         'which_form_is_invalid': which_form_is_invalid
     }
     return render(request, 'pro_debate/index.html', context)
@@ -147,8 +147,10 @@ def process_point_form(form):
     # process the data in form.cleaned_data as required
     point = form.cleaned_data
     child_of_position = Position.objects.get(pk=point['child_of']) if point['child_of'] else None
+    tags = point['tags']
 
     new_position = Position.objects.create(position_statement=point['position'])
+    new_position.tags.add(*tags)
     new_elaboration = Elaboration.objects.create(
         elaboration=point['elaboration'],
         tree_relation=point['tree_relation'],

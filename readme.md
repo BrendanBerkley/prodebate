@@ -7,20 +7,17 @@
 
 ## To Do
 
-### Smaller stuff
-- comments: prepopulate e-mail so it just submits
-
-### Bigger stuff, sooner
+### Sooner
+- Create tag-based views
 - Manifestation models.
 	- Spin out into into its own app?
 	- Refactor to allow the same URL to be applied to multiple notes
 	- Error handling / URL normalizing on submit
 	- External URL or Prodebate position
 - Edit things
-- Get tags working
 - Private/draft points?
 
-### Bigger stuff, later
+### Later
 - I think URLs need to be drastically rethought. They weren't well-thought-out in the first place. I don't like how everything is pretty dependent on GET params. 
 - Grandparents might need to go into the elaboration model because without that you can only ever respond to the parent point. See conceptual discussion.
 - Unit tests! Models are really simple now (no methods to test) and views are in flux. If I stay with Django views for awhile I should write tests; if I go to DRF then the whole game changes.

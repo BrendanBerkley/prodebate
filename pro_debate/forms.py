@@ -1,10 +1,15 @@
 from django import forms
+from taggit.forms import TagField
 
 class SupportCounterPointForm(forms.Form):
     position = forms.CharField(
         label="What's your point?", 
         max_length=255,
         widget=forms.TextInput(attrs={'class':'form-control'})
+    )
+    tags = TagField(
+        widget=forms.TextInput(attrs={'class':'form-control'}),
+        required=True
     )
     elaboration = forms.CharField(
         label='Tell me more.', 
