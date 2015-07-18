@@ -8,7 +8,6 @@
 ## To Do
 
 ### Sooner
-- Create tag-based views
 - Manifestation models.
 	- Spin out into into its own app?
 	- Refactor to allow the same URL to be applied to multiple notes

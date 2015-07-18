@@ -3,11 +3,19 @@
 {% block content %}
 	<div class="col-xs-12">
 		{% if positions %}
-			<div>
+			<h2>Five New Positions</h2>
+			<div class="list-group">
 			{% for position in positions %}
-				<h2><a href="{% url 'detail' position.id %}">{{ position.position_statement}}</a></h2>
+				<a class="list-group-item lead" href="{% url 'detail' position.id %}">{{ position.position_statement }}</a>
 			{% endfor %}
 			</div>
+		{% endif %}
+
+		{% if tags %}
+			<h2>Tags</h2>
+			{% for tag in tags %}
+				<a class="lead" href="{% url 'tag_index' tag.id %}">{{ tag }}</a>{% if not forloop.last %},{% endif %}
+			{% endfor %}
 		{% else %}
 			<p>No positions here.</p>
 		{% endif %}

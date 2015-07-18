@@ -4,12 +4,12 @@ from django.core.urlresolvers import reverse
 
 from .models import Position, Elaboration, Manifestation
 from .forms import SupportCounterPointForm, SubmitManifestationForm
+from taggit.models import Tag, TaggedItem
 
 
 def index(request):
-    positions = Position.objects.filter().order_by('id')
-    # positions = Position.objects.filter().order_by('id')[:50]
-    # positions = Position.objects.exclude(elaboration_of_position__tree_relation='S').exclude(elaboration_of_position__tree_relation='C').order_by('id')[:50]
+    positions = Position.objects.filter().order_by('-id')[:5]
+    tags = Tag.objects.all()
 
     which_form_is_invalid = None
 
@@ -34,7 +34,8 @@ def index(request):
     context = {
         'positions': positions,
         'point_form': form,
-        'which_form_is_invalid': which_form_is_invalid
+        'which_form_is_invalid': which_form_is_invalid,
+        'tags': tags
     }
     return render(request, 'pro_debate/index.html', context)
 
@@ -190,3 +191,14 @@ def process_manifestation(form):
     return_info = parent_param + grandparent_param
 
     return return_info
+
+
+def tag_index(request, tag_id):
+    tag = get_object_or_404(Tag, pk=tag_id)
+    positions_with_tag = Position.objects.filter(tags=tag)
+
+    context = {
+        'tag': tag,
+        'positions_with_tag': positions_with_tag
+    }
+    return render(request, 'pro_debate/tag_index.html', context)

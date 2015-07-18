@@ -5,7 +5,7 @@ from taggit.managers import TaggableManager
 
 class Position(models.Model):
     position_statement = models.CharField(max_length=255)
-    tags = TaggableManager(blank=True)
+    tags = TaggableManager()
 
     def __unicode__(self):
         return self.position_statement

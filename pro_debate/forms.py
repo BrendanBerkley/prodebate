@@ -7,10 +7,6 @@ class SupportCounterPointForm(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={'class':'form-control'})
     )
-    tags = TagField(
-        widget=forms.TextInput(attrs={'class':'form-control'}),
-        required=True
-    )
     elaboration = forms.CharField(
         label='Tell me more.', 
         widget=forms.Textarea(attrs={
@@ -19,6 +15,10 @@ class SupportCounterPointForm(forms.Form):
             'cols': ''
         }),
         required=False
+    )
+    tags = TagField(
+        widget=forms.TextInput(attrs={'class':'form-control'}),
+        required=True
     )
     tree_relation = forms.CharField(
         widget=forms.HiddenInput(), 

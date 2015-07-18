@@ -4,12 +4,19 @@ class SampleData(object):
 
     def create_basics(self):
         position1 = Position.objects.create(position_statement="School uniforms should be mandated.")
+        position1.tags.add('school-uniforms')
         position2 = Position.objects.create(position_statement="Wearing school uniforms does not restrict student individuality.")
+        position2.tags.add('school-uniforms')
         position3 = Position.objects.create(position_statement="Students need to be able to express their individual style.")
+        position3.tags.add('school-uniforms')
         position4 = Position.objects.create(position_statement="Wearing school uniforms eliminates discrimination because of what a student is wearing.")
+        position4.tags.add('school-uniforms')
         position5 = Position.objects.create(position_statement="Wearing school uniforms can save parents on clothing costs.")
+        position5.tags.add('school-uniforms')
         position6 = Position.objects.create(position_statement="Hitler favored school uniforms.")
+        position6.tags.add('school-uniforms')
         position7 = Position.objects.create(position_statement="School uniforms are unlikely to completely eliminate discrimination via clothing.")
+        position7.tags.add('school-uniforms')
 
         elaboration1 = Elaboration.objects.create(
             tree_relation='C',
