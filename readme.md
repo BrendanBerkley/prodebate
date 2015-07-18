@@ -8,8 +8,7 @@
 ## To Do
 
 ### Smaller stuff
-- when form errors, return with correct URL params
-- Manifestation: proper form submit (handle multiple form submits on detail page)
+- comments: prepopulate e-mail so it just submits
 
 ### Bigger stuff, sooner
 - Manifestation models.

@@ -88,7 +88,7 @@
 		</div>
 
 		<div class="{% if not which_form_is_invalid == 'S' %}collapse{% endif %}" id="support-collapse">
-			<form action="{% url 'detail' position.id %}" method="post">
+			<form action="{% url 'detail' position.id %}{{ current_get_params }}" method="post">
 				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="S" form=point_form submit='submit-elaboration' %}
 			</form>
 		</div>
@@ -115,7 +115,7 @@
 		</div>
 
 		<div class="{% if not which_form_is_invalid == 'C' %}collapse{% endif %}" id="counter-collapse">
-			<form action="{% url 'detail' position.id %}" method="post">
+			<form action="{% url 'detail' position.id %}{{ current_get_params }}" method="post">
 				{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="C" form=point_form submit='submit-elaboration' %}
 			</form>
 		</div>
@@ -145,7 +145,7 @@
 						<i class="fa fa-plus"></i> Add a Manifestation
 					</a>
 					<div class="{% if not which_form_is_invalid == 'manifestation' %}collapse{% endif %}" id="manifestation-collapse">
-						<form action="{% url 'detail' position.id %}" method="post">
+						<form action="{% url 'detail' position.id %}{{ current_get_params }}" method="post">
 							{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="manifestation" form=manifestation_form submit='submit-manifestation' %}
 						</form>
 					</div>
@@ -169,7 +169,7 @@
 			{{ form.object_pk }}
 			{{ form.timestamp }}
 			{{ form.security_hash }}
-			<input type="hidden" name="next" value="{% url 'detail' position.id %}" />
+			<input type="hidden" name="next" value="{% url 'detail' position.id %}{{ current_get_params }}" />
 			<br />
 			<input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" />
 			</form>
