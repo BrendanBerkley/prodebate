@@ -9,7 +9,7 @@
 
 ### Sooner
 - Edit things
-- Link tags in detail view
+- Use tags to prepopulate tags in support/counter point forms
 - Manifestation models.
 	- Spin out into into its own app?
 	- Refactor to allow the same URL to be applied to multiple notes

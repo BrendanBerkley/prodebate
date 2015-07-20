@@ -22,7 +22,7 @@
 		<p class="lead">
 			Tags:
 			{% for tag in position.tags.all %}
-				{{ tag.name }}{% if not forloop.last %},{% endif %}
+				<a href="{% url 'tag_index' tag.id %}">{{ tag.name }}</a>{% if not forloop.last %},{% endif %}
 			{% endfor %}
 		</p>
 

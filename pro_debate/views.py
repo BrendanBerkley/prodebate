@@ -95,10 +95,16 @@ def detail(request, position_id):
 
     new_position_grandparent_id = parent.id if parent else ""
 
+    # Prep a tag list to prepopulate the point forms
+    tag_list = ""
+    for tag in position.tags.all():
+        tag_list = tag_list + tag.name + ", "
+
     point_form = SupportCounterPointForm(
         initial={
             'child_of': position.id,
-            'grandchild_of': new_position_grandparent_id
+            'grandchild_of': new_position_grandparent_id,
+            'tags': tag_list
         },
     )
     manifestation_form = SubmitManifestationForm(
