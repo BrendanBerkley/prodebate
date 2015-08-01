@@ -9,11 +9,10 @@
 
 ### Sooner
 - Edit things
-- Use tags to prepopulate tags in support/counter point forms
+- Add existing points as support/counter points
 - Manifestation models.
 	- Spin out into into its own app?
 	- Refactor to allow the same URL to be applied to multiple notes
-	- Error handling / URL normalizing on submit
 	- External URL or Prodebate position
 - Private/draft points?
 
@@ -42,6 +41,14 @@ This site can get super messy, super fast. For example, "School uniforms should 
 Big issue. "School uniforms should be mandated" with counterpoint "the U.S. Constitution mandates freedom of expression" causes problems if original poster was in Brazil. "School uniforms should be mandated at primary schools in Rio de Janeiro" and "School uniforms should be mandated in all Italian public schools" would have a lot of the same arguments, but lumping them under the generic umbrella could take away interesting opportunities for discussion. Maybe there are specific things about primary schools in Rio that would make the debate different there. 
 
 Tags/categorization could play a role here. Or there might be a way to centralize "School uniforms should be mandated" but have a "sister" point like "... in primary schools in Rio".
+
+### Ownership / editing of positions
+
+While working on the 'edit' feature, I realized that some questions need to be considered. Positions statements are different than, say, a Stack Exchange question title because argument trees could be built on specific wording. Stupid example, but if the position is "Hitler favored school uniforms" and I counter with "Reductio ad hiterlum", and then the position is edited to "Stalin favored school uniforms", the counterpoint becomes moot. On the flip side, a poorly-worded position could be improved by an edit. Also, that example really demonstrates a spot where moderation would step in - changing one word changes the entire position, so it shouldn't be allowed. 
+
+Editing elaborations isn't as consequential and is a more likely use case of an editing feature. 
+
+Also, who gets to edit stuff? I think ideally I'd like to follow Stack Exchange here - wiki-type revisions with history and certain editing privileges afforded to people who have the reptutation to do so. For now it'll just be a logged-in user; obviously that's not a long-term solution.
 
 ## Ideas
 

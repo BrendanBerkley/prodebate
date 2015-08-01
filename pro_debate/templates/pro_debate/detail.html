@@ -25,11 +25,17 @@
 				<a href="{% url 'tag_index' tag.id %}">{{ tag.name }}</a>{% if not forloop.last %},{% endif %}
 			{% endfor %}
 		</p>
+		{% if user.is_authenticated %}
+		<p>
+			<a href="{% url 'edit_position' position.id %}{{ current_get_params }}">Edit position statement and tag info</a>
+		</p>
+		{% endif %}
 
 		<div class="row">
 		{% if parent %}
 			<div class="{% if elaborations_in_other_trees %}col-sm-8{% else %}col-xs-12{% endif %}">
 				<p class="lead">
+					<br />
 					{{ elaboration_in_tree.elaboration }}
 				</p>
 			</div>
@@ -51,7 +57,7 @@
 		{% else %}
 			<div class="col-xs-12">
 			{% if elaboration_in_tree %}
-				<p class="lead">{{ elaboration_in_tree.elaboration }}</p>
+				<p class="lead"><br />{{ elaboration_in_tree.elaboration }}</p>
 			{% endif %}
 
 			{% if elaborations_in_other_trees %}
@@ -69,8 +75,18 @@
 			{% endif %}
 			</div>
 		{% endif %}
-
 		</div>
+		
+		{% if user.is_authenticated %}
+		<p>
+			{% if elaboration_in_tree %}
+			<a href="{% url 'edit_elaboration' elaboration_in_tree.id %}{{ current_get_params }}">Edit elaboration</a>
+			{% else %}
+			<a href="{% url 'add_elaboration' position.id %}{{ current_get_params }}">Add elaboration</a>
+			{% endif %}
+		</p>
+		{% endif %}
+
 		<br />
 
 		<h3>Supporting points</h3>

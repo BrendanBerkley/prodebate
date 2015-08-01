@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
 from .models import Position, Elaboration, Manifestation
-from .forms import SupportCounterPointForm, SubmitManifestationForm
+from .forms import PositionForm, ElaborationForm, SupportCounterPointForm, SubmitManifestationForm
 from taggit.models import Tag, TaggedItem
 
 
@@ -208,3 +208,84 @@ def tag_index(request, tag_id):
         'positions_with_tag': positions_with_tag
     }
     return render(request, 'pro_debate/tag_index.html', context)
+
+
+def add_elaboration(request, position_id):
+    if request.method == 'POST':
+        form = ElaborationForm(request.POST)
+        if form.is_valid():
+            elaboration = Elaboration.objects.create(
+                elaboration=form.cleaned_data['elaboration'],
+                tree_relation="G",
+                elaborates=get_object_or_404(Position, pk=position_id),
+            )
+
+            return HttpResponseRedirect(reverse('detail', args=(position_id,)))
+    else:
+        form = ElaborationForm()
+
+    context = {
+        'form': form,
+        'position_id': position_id,
+    }
+    return render(request, 'pro_debate/add_elaboration.html', context)
+
+
+def edit_elaboration(request, elaboration_id):
+    elaboration = get_object_or_404(Elaboration, pk=elaboration_id)
+
+    if request.method == 'POST':
+        form = ElaborationForm(request.POST)
+        if form.is_valid():
+            elaboration.elaboration = form.cleaned_data['elaboration']
+            elaboration.save()
+
+            redirect_info = '?parent=' + str(elaboration.child_of.id) if elaboration.child_of else ''
+
+            return HttpResponseRedirect(reverse('detail', args=(elaboration.elaborates.id,)) + redirect_info)
+    else:
+        form = ElaborationForm(
+            initial={
+                'elaboration': elaboration.elaboration,
+            }
+        )
+
+    context = {
+        'elaboration': elaboration,
+        'form': form,
+    }
+    return render(request, 'pro_debate/edit_elaboration.html', context)
+
+
+def edit_position(request, position_id):
+    position = get_object_or_404(Position, pk=position_id)
+    elaborations = Elaboration.objects.filter(child_of=position_id)
+    
+    if request.method == 'POST':
+        form = PositionForm(request.POST)
+        if form.is_valid():
+            position.position_statement = form.cleaned_data['position']
+            tags = form.cleaned_data['tags']
+            position.tags.all().delete()
+            position.tags.add(*tags)
+            position.save()
+
+            return HttpResponseRedirect(reverse('detail', args=(position_id,)))
+    else:
+        tag_list = ""
+        for tag in position.tags.all():
+            tag_list = tag_list + tag.name + ", "
+
+        form = PositionForm(
+            initial={
+                'position': position.position_statement,
+                'tags': tag_list,
+            }
+        )
+
+    context = {
+        'position_id': position_id,
+        'form': form,
+        'elaborations': elaborations
+    }
+    return render(request, 'pro_debate/edit_position.html', context)

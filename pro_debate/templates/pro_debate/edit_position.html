@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	{% if user.is_authenticated %}
+	<div class="col-xs-12">
+		<h3>Edit Position</h3>
+		<form action="{% url 'edit_position' position_id %}{{ current_get_params }}" method="post">
+			{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="X" %}
+		</form>
+
+		{% if elaborations %}
+		<h3>One does not simply change the position statement</h3>
+		<p>Before changing the title, consider that all of these points are attached to it. Don't edit the position in a way that makes a bunch of these child points irrelevant, unless that's what you want to do, in which case go and clean up the positions.</p>
+		<ul>
+		{% for elaboration in elaborations %}
+			<li>
+				<a href="{% url 'detail' elaboration.elaborates.id %}">
+					{{ elaboration.get_tree_relation_display }}: {{ elaboration.elaborates }}
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+		{% endif %}
+	</div>
+	{% endif %}
+{% endblock %}

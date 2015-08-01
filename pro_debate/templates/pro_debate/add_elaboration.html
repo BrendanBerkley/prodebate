@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	{% if user.is_authenticated %}
+	<div class="col-xs-12">
+		<h3>{{ elaboration.elaborates }}</h3>
+
+		<form action="{% url 'add_elaboration' position_id %}{{ current_get_params }}" method="post">
+			{% include 'pro_debate/includes/elaboration_submit.html' with tree_relation="X" form=form %}
+		</form>
+	</div>
+	{% endif %}	
+{% endblock %}
